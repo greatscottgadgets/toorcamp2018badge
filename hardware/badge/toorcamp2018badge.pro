@@ -46,7 +46,7 @@ LibName10=dip_sockets
 LibName11=toorcamp2018badge
 [eeschema]
 version=1
-LibDir=gsg-kicad-lib
+LibDir=../gsg-kicad-lib
 [eeschema/libraries]
 LibName1=gsg-symbols
 LibName2=power
