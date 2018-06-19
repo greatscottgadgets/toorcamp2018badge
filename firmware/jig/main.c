@@ -22,7 +22,8 @@ int main(void) {
 	/* Do things here 
 	 * Obviously there should be some logic around this
 	 */
-	init_tests();
+	badge_detect();
+	battery_detect();
 	r5_test();
 	r6_test();
 	mcu_test();

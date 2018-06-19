@@ -17,6 +17,10 @@ enum test_result
 // Initialise the pins for EUT/BAT detect and R5/E6 check
 void init_tests(void);
 //
+uint8_t badge_detect();
+//
+uint8_t battery_detect();
+//
 uint8_t r5_test();
 //
 uint8_t r6_test();

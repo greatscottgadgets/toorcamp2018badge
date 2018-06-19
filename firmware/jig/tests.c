@@ -34,6 +34,18 @@ void init_tests(void) {
     ;
 }
 
+uint8_t badge_detect() {
+	uint8_t result = FAIL;
+    show_detect_result(result, badge_leds);
+	return result;
+}
+
+uint8_t battery_detect() {
+	uint8_t result = FAIL;
+    show_detect_result(result, battery_leds);
+	return result;
+}
+
 uint8_t r5_test() {
     uint8_t pins = 1;
 	uint8_t clkdiv = 45;

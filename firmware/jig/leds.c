@@ -10,11 +10,20 @@
 static struct gpio_t eut_present = GPIO(2, 10);
 static struct gpio_t eut_not_present = GPIO(1, 8);
 static struct gpio_t eut_detect_fault = GPIO(1, 9);
+detect_t badge_leds = {
+	.present = &eut_present,
+	.not_present = &eut_not_present,
+	.fault = &eut_detect_fault,
+};
 
 static struct gpio_t bat_present = GPIO(2, 9);
 static struct gpio_t bat_not_present = GPIO(0, 0);
 static struct gpio_t bat_detect_fault = GPIO(1, 0);
-
+detect_t battery_leds = {
+	.present = &bat_present,
+	.not_present = &bat_not_present,
+	.fault = &bat_detect_fault,
+};
 
 static struct gpio_t r5_pass = GPIO(0, 1);
 static struct gpio_t r5_fail = GPIO(1, 1);

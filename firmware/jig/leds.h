@@ -13,6 +13,9 @@ typedef struct {
 	gpio_t fault;
 } detect_t;
 
+extern detect_t badge_leds;
+extern detect_t battery_leds;
+
 typedef struct {
 	gpio_t pass;
 	gpio_t fail;
