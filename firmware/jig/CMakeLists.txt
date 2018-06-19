@@ -15,6 +15,8 @@ project(toorcamp-badge-test-jig)
 include(${PATH_GREATFET_FIRMWARE}/cmake/greatfet-common.cmake)
 
 set(SRC_M4
+	leds.c
+	tests.c
 	main.c
 	"${PATH_GREATFET_FIRMWARE}/common/jtag.c"
 	"${PATH_GREATFET_FIRMWARE}/common/jtag430.c"
