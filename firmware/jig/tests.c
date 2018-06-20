@@ -14,24 +14,46 @@
 #include"leds.h"
 
 
-// static struct gpio_t r5_adc = GPIO(, );
-static struct gpio_t r6_adc = GPIO(3, 15);
-// static struct gpio_t bat_detect_fault = GPIO(, );
+static struct gpio_t r5_adc = GPIO(3, 15);
+static struct gpio_t r5_sply = GPIO(2, 11);
+static struct gpio_t r6_sply = GPIO(2, 0);
+static struct gpio_t gnd_alt = GPIO(0, 4);
+// static struct gpio_t tms = GPIO(0, 15);
+static struct gpio_t tms_alt = GPIO(2, 12);
+static struct gpio_t vctl = GPIO(1, 5);
+static struct gpio_t vtgt = GPIO(1, 4);
 
 
-#define R5_TEST (P7_7)
-// #define R6_TEST (P)
-// #define EUT_DETECT_FAULT (P)
+#define R5_ADC (P7_7) // GPIO3[15]
+#define R6_ADC (ADC0) // This isn't used, mostly a comment
+#define R5_SPLY (P5_2) // GPIO2[11]
+#define R6_SPLY (P4_0) // GPIO2[0]
+#define GND_ALT (P1_0) // GPIO0[4]
+#define TMS (P1_20) // GPIO0[15]
+#define TMS_ALT (P5_3) // GPIO2[12]
+#define VCTL (P1_12) // GPIO1[5]
+#define VTGT (P1_11) // GPIO1[4]
 
 // Luckily all are pinmux function 0
 #define GPIO_MODE SCU_GPIO_FAST | SCU_GPIO_PUP | SCU_CONF_FUNCTION0
 
 // Initialise the pins for EUT/BAT detect and R5/E6 check
 void init_tests(void) {
-	// scu_pinmux(EUT_PRESENT, GPIO_MODE);
-	// scu_pinmux(EUT_NOT_PRESENT, GPIO_MODE);
-	// scu_pinmux(EUT_DETECT_FAULT, GPIO_MODE);
-    ;
+	scu_pinmux(R5_ADC, GPIO_MODE);
+	scu_pinmux(R5_SPLY, GPIO_MODE);
+	scu_pinmux(R6_SPLY, GPIO_MODE);
+	scu_pinmux(GND_ALT, GPIO_MODE);
+	scu_pinmux(TMS, GPIO_MODE);
+	scu_pinmux(TMS_ALT, GPIO_MODE);
+	scu_pinmux(VCTL, GPIO_MODE);
+	scu_pinmux(VTGT, GPIO_MODE);
+    gpio_input(&r5_adc);
+    gpio_output(&r5_sply);
+    gpio_output(&r6_sply);
+    gpio_input(&gnd_alt);
+    gpio_input(&tms_alt);
+    gpio_input(&vctl);
+    gpio_input(&vtgt);
 }
 
 uint8_t badge_detect() {
