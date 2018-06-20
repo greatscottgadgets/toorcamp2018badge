@@ -49,21 +49,38 @@ void init_tests(void) {
 	scu_pinmux(VTGT, GPIO_MODE);
     gpio_input(&r5_adc);
     gpio_output(&r5_sply);
+    gpio_write(&r5_sply, 0);
     gpio_output(&r6_sply);
+    gpio_write(&r5_sply, 0);
     gpio_input(&gnd_alt);
     gpio_input(&tms_alt);
-    gpio_input(&vctl);
+    gpio_output(&vctl);
+    gpio_write(&vctl, 0);
     gpio_input(&vtgt);
 }
 
 uint8_t badge_detect() {
-	uint8_t result = FAIL;
+	uint8_t p7, p14, result = FAIL;
+    p7 = gpio_read(&gnd_alt);
+    gpio_write(&tms, 1);
+    p14 = gpio_read(&tms_alt);
+    if((p7 == 0) && (p14 == 1))
+        result = PASS;
     show_detect_result(result, badge_leds);
 	return result;
 }
 
 uint8_t battery_detect() {
-	uint8_t result = FAIL;
+	uint8_t result = FAULT;
+    gpio_write(&vctl, 0);
+    // Do we need some settling delay here?
+    if(gpio_read(&vtgt)) {
+        result = PASS;
+    } else {
+        result= FAIL;
+        gpio_write(&vctl, 1);
+    }
+    
     show_detect_result(result, battery_leds);
 	return result;
 }
