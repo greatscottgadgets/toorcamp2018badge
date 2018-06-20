@@ -75,21 +75,21 @@ uint8_t r5_test() {
     uint8_t result = FAIL;
 	uint16_t value;
 
-    ADC1_CR = ADC_CR_SEL((uint32_t) pins) |
+    ADC0_CR = ADC_CR_SEL((uint32_t) pins) |
     ADC_CR_CLKDIV((uint32_t) clkdiv) |
     ADC_CR_CLKS((uint32_t) clks) |
     ADC_CR_PDN;
-    ADC1_CR |= ADC_CR_START(1);
+    ADC0_CR |= ADC_CR_START(1);
 
-    while(!(ADC1_DR6 & ADC_DR_DONE));
-    value = (ADC1_DR6>>6) & 0x3ff;
+    while(!(ADC0_DR6 & ADC_DR_DONE));
+    value = (ADC0_DR6>>6) & 0x3ff;
 
     show_test_result(result, r5_leds);
 	return result;
 }
 
 uint8_t r6_test() {
-    uint8_t pins = 1;
+    uint8_t pins = 1 << 6;
 	uint8_t clkdiv = 45;
 	uint8_t clks = 0x2;
     uint8_t result = CLEAR;
@@ -104,6 +104,7 @@ uint8_t r6_test() {
     while(!(ADC0_DR0 & ADC_DR_DONE));
     value = (ADC0_DR0>>6) & 0x3ff;
 
+    // This is Dominic trying to narrow down the values for R6
     if(value <= 0x50)
         result = ALL;
     else if(value >= 0x60)
@@ -150,14 +151,22 @@ uint8_t program() {
 
 	// Write firmware
 	uint16_t *buffer = (uint16_t*) badge_firmware;
-	jtag430_writeflash_bulk(0xF800, 1024, buffer);
+	jtag430_writeflash_bulk(0xF800, badge_firmware_len/2, buffer);
     result = PASS;
     show_test_result(result, program_leds);
 	return result;
 }
 
 uint8_t verify() {
-	uint8_t result = FAIL;
+	uint8_t result = PASS;
+    uint16_t *buffer = (uint16_t*) badge_firmware;
+    uint16_t i;
+    for(i = 0; i < badge_firmware_len/2; i++) {
+        if(jtag430_readmem(0xF800+(i*2)) != buffer[i]) {
+            result = FAIL;
+            break;
+        }
+    }
     show_test_result(result, verify_leds);
 	return result;
 }
