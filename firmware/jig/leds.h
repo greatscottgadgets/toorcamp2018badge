@@ -33,5 +33,6 @@ extern test_t run_leds;
 void show_detect_result(uint8_t result, detect_t detect);
 void show_test_result(uint8_t result, test_t test);
 void init_leds(void);
+void clear_leds(void);
 
 #endif /* __LEDS_H__ */

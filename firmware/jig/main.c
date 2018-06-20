@@ -18,7 +18,7 @@ enum test_state
 	R5       = 2,
     R6       = 3,
     CAPSENSE = 4,
-	mcu      = 5,
+	MCU      = 5,
 	JTAG     = 7,
 	PROGRAM  = 8,
 	VERIFY   = 9,
@@ -31,9 +31,10 @@ void pause(void) {
 
 static uint8_t state = BADGE;
 
-void erro_handler(void) {
+void error_handler(void) {
 	while(badge_detect() == PASS)
 		pause();
+	clear_leds();
 	state = BADGE;
 }
 int main(void) {
@@ -53,44 +54,82 @@ int main(void) {
 			pause();
 		}
 
-		while(state == BATTERY) {
+		if(state == BATTERY) {
 			// Detect battery and enable power it if not present
-			if(battery_detect() == FAULT)
-				erro_handler();
+			if(battery_detect() == FAULT) {
+				error_handler();
+			}
 			pause();
 			state = R5;
 		}
 
-		while(state == R5) {
+		if(state == R5) {
 			if(r5_test() == PASS) {
 				state = R6;
 			} else {
-				erro_handler();
+				error_handler();
 			}
 			pause();
 		}
 
-		while(state == R6) {
+		if(state == R6) {
 			if(r6_test() == PASS) {
 				state = CAPSENSE;
 			} else {
-				erro_handler();
+				error_handler();
 			}
 			pause();
 		}
 
-		capsense_test();
-		pause();
-		mcu_test();
-		pause();
-		jtag_test();
-		pause();
-		program();
-		pause();
-		verify();
-		pause();
-		run();
-		erro_handler();
+		if(state == CAPSENSE) {
+			if(capsense_test() == PASS) {
+				state = MCU;
+			} else {
+				error_handler();
+			}
+			pause();
+		}
+
+		if(state == MCU) {
+			if(mcu_test() == PASS) {
+				state = JTAG;
+			} else {
+				error_handler();
+			}
+			pause();
+		}
+
+		if(state == JTAG) {
+			if(jtag_test() == PASS) {
+				state = PROGRAM;
+			} else {
+				error_handler();
+			}
+			pause();
+		}
+
+		if(state == PROGRAM) {
+			if(program() == PASS) {
+				state = VERIFY;
+			} else {
+				error_handler();
+			}
+			pause();
+		}
+
+		if(state == VERIFY) {
+			if(verify() == PASS) {
+				state = RUN;
+			} else {
+				error_handler();
+			}
+			pause();
+		}
+
+		if(state == RUN) {
+			run();
+			error_handler();
+		}
 	}
 	return 0;
 }

@@ -222,3 +222,17 @@ void init_leds(void) {
 	gpio_output(&run_pass);
 	gpio_output(&run_fail);
 }
+
+void clear_leds(void) {
+	show_detect_result(CLEAR, badge_leds);
+	show_detect_result(CLEAR, battery_leds);
+
+	show_test_result(CLEAR, r5_leds);
+	show_test_result(CLEAR, r6_leds);
+	show_test_result(CLEAR, mcu_leds);
+	show_test_result(CLEAR, capsense_leds);
+	show_test_result(CLEAR, jtag_leds);
+	show_test_result(CLEAR, program_leds);
+	show_test_result(CLEAR, verify_leds);
+	show_test_result(CLEAR, run_leds);
+}

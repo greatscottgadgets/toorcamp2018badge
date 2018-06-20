@@ -72,15 +72,14 @@ uint8_t badge_detect() {
 
 uint8_t battery_detect() {
 	uint8_t result = FAULT;
-    gpio_write(&vctl, 0);
+    gpio_write(&vctl, 1);
     // Do we need some settling delay here?
     if(gpio_read(&vtgt)) {
         result = PASS;
     } else {
         result= FAIL;
-        gpio_write(&vctl, 1);
+        gpio_write(&vctl, 0);
     }
-    
     show_detect_result(result, battery_leds);
 	return result;
 }
@@ -91,7 +90,7 @@ uint8_t battery_detect() {
 #define R5_LOW 0x30
 
 uint8_t r5_test() {
-    uint8_t pins = 1;
+    uint8_t pins = 1<<6;
 	uint8_t clkdiv = 45;
 	uint8_t clks = 0x2;
     uint8_t result = FAIL;
@@ -121,7 +120,7 @@ uint8_t r5_test() {
 #define R6_LOW 0x30
 
 uint8_t r6_test() {
-    uint8_t pins = 1 << 6;
+    uint8_t pins = 1;
 	uint8_t clkdiv = 45;
 	uint8_t clks = 0x2;
     uint8_t result = FAIL;
