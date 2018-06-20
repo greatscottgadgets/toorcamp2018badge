@@ -11,6 +11,9 @@
 #include "leds.h"
 #include "tests.h"
 
+void pause(void) {
+	delay(10000000);
+}
 
 int main(void) {
 	cpu_clock_init();
@@ -23,14 +26,23 @@ int main(void) {
 	 * Obviously there should be some logic around this
 	 */
 	badge_detect();
+	pause();
 	battery_detect();
-	r5_test();
+	pause();
+	// r5_test();
+	pause();
 	r6_test();
-	mcu_test();
+	pause();
 	capsense_test();
+	pause();
+	mcu_test();
+	pause();
 	jtag_test();
+	pause();
 	program();
+	pause();
 	verify();
+	pause();
 	run();
 	return 0;
 }

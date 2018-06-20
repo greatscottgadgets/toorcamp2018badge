@@ -75,14 +75,14 @@ uint8_t r5_test() {
     uint8_t result = FAIL;
 	uint16_t value;
 
-    // ADC1_CR = ADC_CR_SEL((uint32_t) pins) |
-    // ADC_CR_CLKDIV((uint32_t) clkdiv) |
-    // ADC_CR_CLKS((uint32_t) clks) |
-    // ADC_CR_PDN;
-    // ADC1_CR |= ADC_CR_START(1);
+    ADC1_CR = ADC_CR_SEL((uint32_t) pins) |
+    ADC_CR_CLKDIV((uint32_t) clkdiv) |
+    ADC_CR_CLKS((uint32_t) clks) |
+    ADC_CR_PDN;
+    ADC1_CR |= ADC_CR_START(1);
 
-    // while(!(ADC1_DR6 & ADC_DR_DONE));
-    // value = (ADC1_DR6>>6) & 0x3ff;
+    while(!(ADC1_DR6 & ADC_DR_DONE));
+    value = (ADC1_DR6>>6) & 0x3ff;
 
     show_test_result(result, r5_leds);
 	return result;
@@ -92,17 +92,24 @@ uint8_t r6_test() {
     uint8_t pins = 1;
 	uint8_t clkdiv = 45;
 	uint8_t clks = 0x2;
-    uint8_t result = FAIL;
+    uint8_t result = CLEAR;
 	uint16_t value;
 
-    // ADC0_CR = ADC_CR_SEL((uint32_t) pins) |
-    // ADC_CR_CLKDIV((uint32_t) clkdiv) |
-    // ADC_CR_CLKS((uint32_t) clks) |
-    // ADC_CR_PDN;
-    // ADC0_CR |= ADC_CR_START(1);
+    ADC0_CR = ADC_CR_SEL((uint32_t) pins) |
+    ADC_CR_CLKDIV((uint32_t) clkdiv) |
+    ADC_CR_CLKS((uint32_t) clks) |
+    ADC_CR_PDN;
+    ADC0_CR |= ADC_CR_START(1);
 
-    // while(!(ADC0_DR0 & ADC_DR_DONE));
-    // value = (ADC0_DR0>>6) & 0x3ff;
+    while(!(ADC0_DR0 & ADC_DR_DONE));
+    value = (ADC0_DR0>>6) & 0x3ff;
+
+    if(value <= 0x50)
+        result = ALL;
+    else if(value >= 0x60)
+        result = PASS;
+    else if(value >= 0x70)
+        result = FAIL;
 
     show_test_result(result, r6_leds);
 	return result;
