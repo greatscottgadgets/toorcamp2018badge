@@ -68,12 +68,18 @@ uint8_t battery_detect() {
 	return result;
 }
 
+// This is Dominic trying to narrow down the values for R5
+// These values need to be fixed
+#define R5_HIGH 0x60
+#define R5_LOW 0x30
+
 uint8_t r5_test() {
     uint8_t pins = 1;
 	uint8_t clkdiv = 45;
 	uint8_t clks = 0x2;
     uint8_t result = FAIL;
 	uint16_t value;
+    gpio_write(&r5_sply, 1);
 
     ADC0_CR = ADC_CR_SEL((uint32_t) pins) |
     ADC_CR_CLKDIV((uint32_t) clkdiv) |
@@ -84,16 +90,26 @@ uint8_t r5_test() {
     while(!(ADC0_DR6 & ADC_DR_DONE));
     value = (ADC0_DR6>>6) & 0x3ff;
 
+    if((value >= R5_LOW) && (value <= R5_HIGH))
+        result = PASS;
+
+    gpio_write(&r5_sply, 0);
     show_test_result(result, r5_leds);
 	return result;
 }
+
+// This is Dominic trying to narrow down the values for R6
+// These values need to be fixed
+#define R6_HIGH 0x60
+#define R6_LOW 0x30
 
 uint8_t r6_test() {
     uint8_t pins = 1 << 6;
 	uint8_t clkdiv = 45;
 	uint8_t clks = 0x2;
-    uint8_t result = CLEAR;
+    uint8_t result = FAIL;
 	uint16_t value;
+    gpio_write(&r6_sply, 1);
 
     ADC0_CR = ADC_CR_SEL((uint32_t) pins) |
     ADC_CR_CLKDIV((uint32_t) clkdiv) |
@@ -104,14 +120,10 @@ uint8_t r6_test() {
     while(!(ADC0_DR0 & ADC_DR_DONE));
     value = (ADC0_DR0>>6) & 0x3ff;
 
-    // This is Dominic trying to narrow down the values for R6
-    if(value <= 0x50)
-        result = ALL;
-    else if(value >= 0x60)
+    if((value >= R6_LOW) && (value <= R6_HIGH))
         result = PASS;
-    else if(value >= 0x70)
-        result = FAIL;
 
+    gpio_write(&r6_sply, 0);
     show_test_result(result, r6_leds);
 	return result;
 }
