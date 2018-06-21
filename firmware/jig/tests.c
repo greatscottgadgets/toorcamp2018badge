@@ -44,9 +44,9 @@ void init_tests(void) {
 	scu_pinmux(R6_SPLY, GPIO_MODE);
 	scu_pinmux(GND_ALT, GPIO_MODE);
 	scu_pinmux(TMS, GPIO_MODE);
-	scu_pinmux(TMS_ALT, GPIO_MODE);
+	scu_pinmux(TMS_ALT, SCU_GPIO_FAST | SCU_GPIO_PDN | SCU_CONF_FUNCTION0);
 	scu_pinmux(VCTL, GPIO_MODE);
-	scu_pinmux(VTGT, GPIO_MODE);
+	scu_pinmux(VTGT, SCU_GPIO_FAST | SCU_GPIO_PDN | SCU_CONF_FUNCTION0);
     gpio_input(&r5_adc);
     gpio_output(&r5_sply);
     gpio_write(&r5_sply, 0);
@@ -57,28 +57,36 @@ void init_tests(void) {
     gpio_output(&vctl);
     gpio_write(&vctl, 0);
     gpio_input(&vtgt);
+	gpio_output(&tms);
 }
 
 uint8_t badge_detect() {
 	uint8_t p7, p14, result = FAIL;
-    p7 = gpio_read(&gnd_alt);
+    p14 = gpio_read(&gnd_alt);
     gpio_write(&tms, 1);
-    p14 = gpio_read(&tms_alt);
-    if((p7 == 0) && (p14 == 1))
-        result = PASS;
+    p7 = gpio_read(&tms_alt);
+    if((p7 == 1) && (p14 == 0)) {
+        delay_us(500000);
+        if((p7 == 1) && (p14 == 0))
+            result = PASS;
+    }
     show_detect_result(result, badge_leds);
+    gpio_write(&tms, 0);
 	return result;
 }
 
 uint8_t battery_detect() {
 	uint8_t result = FAULT;
-    gpio_write(&vctl, 1);
-    // Do we need some settling delay here?
+    gpio_write(&vctl, 0);
+    delay_us(10000000);
     if(gpio_read(&vtgt)) {
         result = PASS;
     } else {
-        result= FAIL;
-        gpio_write(&vctl, 0);
+        gpio_write(&vctl, 1);
+        delay_us(10000);
+        if(gpio_read(&vtgt)) {
+            result = FAIL;
+        }
     }
     show_detect_result(result, battery_leds);
 	return result;
@@ -144,14 +152,16 @@ uint8_t r6_test() {
 	return result;
 }
 
+// Not implemented
 uint8_t mcu_test() {
-	uint8_t result = FAIL;
+	uint8_t result = PASS;
     show_test_result(result, mcu_leds);
 	return result;
 }
 
+// Not implemented
 uint8_t capsense_test() {
-	uint8_t result = FAIL;
+	uint8_t result = PASS;
     show_test_result(result, capsense_leds);
 	return result;
 }
