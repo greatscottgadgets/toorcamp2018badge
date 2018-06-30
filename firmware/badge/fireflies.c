@@ -39,6 +39,7 @@
 /* alternative names for capacitive sense pads */
 #define LOGO BIT6
 #define P13 BIT6
+#define HIDDEN BIT7
 #define P12 BIT7
 
 #define LEDS_OFF P1OUT = 0; P1DIR = 0xff
@@ -131,6 +132,22 @@ void test_leds(void)
 	LEDS_OFF;
 }
 
+void party_mode(void)
+{
+	uint16_t i;
+	uint8_t led = 0;
+
+	for (i = 0x600; i; i--) {
+		led = (led + 1 + rand(2)) % NUM_LEDS;
+		set_led(led);
+		long_sleep(WDT_ADLY_1_9);
+		LEDS_OFF;
+		long_sleep(WDT_ADLY_1_9);
+		long_sleep(WDT_ADLY_1_9);
+		long_sleep(WDT_ADLY_1_9);
+	}
+}
+
 /*
  * Start capacitive sensing on one of the pins on Port 2.  Call this function
  * to start sensing, then wait for capsense_result to be set, then call
@@ -138,8 +155,18 @@ void test_leds(void)
  *
  * Instead of waiting for capsense_result to be set, you can drop into LPM0 to
  * save power while waiting for completion of sensing.
+ *
+ * Call with pin set to LOGO or HIDDEN.  LOGO is the primary capsense pad (the
+ * ToorCamp logo), also expansion pad P13.  HIDDEN is the secondary capsense
+ * pad, expansion pad P12.
  */
 void capsense(uint8_t pin) {
+	if (HIDDEN & pin) {
+		pin = HIDDEN;
+	} else {
+		pin = LOGO;
+	}
+
 	P2DIR = 0xff;
 	P2OUT = pin;
 	P2REN = 0;
@@ -261,6 +288,9 @@ void light_show(void)
 		}
 		if (capsense_result) {
 			if (check_capsense()) {
+				if (HIDDEN == pin) {
+					party_mode();
+				}
 				if (246 > excitement) {
 					excitement += 8;
 				} else {
@@ -273,6 +303,11 @@ void light_show(void)
 						break;
 					}
 				}
+			}
+			if (254 < excitement) {
+				pin = HIDDEN;
+			} else {
+				pin = LOGO;
 			}
 			capsense(pin);
 		}
