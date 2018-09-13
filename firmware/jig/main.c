@@ -50,7 +50,7 @@ int main(void) {
 	while(1) {
 		while(state == BADGE) {
 			if(badge_detect() == PASS)
-				state = BATTERY;
+				state = JTAG;
 			pause();
 		}
 
