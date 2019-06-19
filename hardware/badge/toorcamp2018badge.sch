@@ -36,7 +36,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "ToorCamp 2018 Badge"
-Date "10 may 2012"
+Date "2018-06-30"
 Rev ""
 Comp "Copyright 2018 Great Scott Gadgets"
 Comment1 "License: BSD-3-Clause, http://greatscottgadgets.com/toorcamp2018badge/"
